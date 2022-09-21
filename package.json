@@ -3,6 +3,7 @@
   "version": "0.1.1",
   "description": "Integrate Cypress into your CI provider",
   "main": "./bin/index.js",
+  "types": "./bin/index.d.ts",
   "repository": "git@github.com:greenblues1190/cypress-ci.git",
   "homepage": "https://github.com/greenblues1190/cypress-ci",
   "bugs": {
@@ -12,7 +13,7 @@
     "cypress-ci": "bin/cli.js"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc --declaration"
   },
   "keywords": [
     "ci",
