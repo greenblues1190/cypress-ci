@@ -4,11 +4,11 @@ Integrate [Cypress](https://www.cypress.io/) into your CI provider
 
 ## Features
 
-- [x] Start server and test in parallel
-- [x] Stop CI build when test failed
-- [x] Out of the box integration with CI providers
-- [x] No more `Ctrl-C`, Server will be shutdown gracefully
-- [x] Export stats file while logging console outputs
+- [x] **out of the box** (integration without extra jobs)
+- [x] **automated** (start server and test, abort CI build when a test fails)
+- [x] **safe** (no more `Ctrl-C`, server will be shutdown gracefully)
+- [x] **extendable** (import local Cypress configuration file)
+- [x] **reports** (export test result as a file while logging console outputs)
 
 ## Installation
 
@@ -28,9 +28,7 @@ yarn add --dev cypress-ci
 
 ### Prerequisites
 
-> Disclaimer: You need dependencies below before running cypress in CI providers.
-
-https://docs.cypress.io/guides/continuous-integration/introduction.html#Dependencies
+> Disclaimer: You need [dependencies](https://docs.cypress.io/guides/continuous-integration/introduction.html#Dependencies) below before running cypress in CI providers.
 
 #### Ubuntu/Debian
 
@@ -49,32 +47,34 @@ yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-deve
 ```json
 "scripts": {
   "start": "webpack serve",
-  "test:ci": "cypress-ci -s start -u 'http://localhost:3000"
+  "cypress:ci": "cypress-ci -s start -u http://localhost:3000 -c cypress.ci.json"
 }
 ```
 
 #### Available Options
 
-| option            | description               | default                 |
-| ----------------- | ------------------------- | ----------------------- |
-| `-s`, `--serve`   | script to run server      | `start`                 |
-| `-u`, `--url`     | url to test               | `http://localhost:3000` |
-| `-V`, `--version` | output the version number |
-| `-h`, `--help`    | display help for command  |
+| option            | description                                      | default                 |
+| ----------------- | ------------------------------------------------ | ----------------------- |
+| `-s`, `--serve`   | script to run server                             | `start`                 |
+| `-u`, `--url`     | url to test                                      | `http://localhost:3000` |
+| `-t`, `--timeout` | maximum time in ms to wait for a server response | 60000                   |
+| `-c`, `--config`  | path to cypress config json file                 | `cypress.ci.json`       |
+| `-V`, `--version` | output the version number                        |
+| `-h`, `--help`    | display help for command                         |
 
-### build script
+### In CI build script
 
 1. Make sure that you install Node.js and all the [dependencies](#prerequisites).
 
 2. Add the script below in build script in your CI provider before a build.
 
 ```sh
-npm run test:ci
+npm run cypress:ci
 ```
 
-## Examples
+#### Examples
 
-### Jenkins freestyle
+Jenkins freestyle
 
 ```bash
 #!/bin/bash
@@ -86,9 +86,9 @@ npm run build
 
 ## Roadmap
 
-- Import and override Cypress config file
-- Provide webpack plugin
-- Support typescript
+- [x] Import and override Cypress config file
+- [x] Support typescript
+- [ ] Provide webpack plugin
 
 ## License
 
