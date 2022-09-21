@@ -1,22 +1,29 @@
-import { exec } from 'child_process';
+import { exec, ExecException } from 'child_process';
 import fs from 'fs';
 import cypress from 'cypress';
 import waitOn from 'wait-on';
 import { normalizeCommand, Logger } from './utils';
 
+const ESRCH = 3;
 const logger = new Logger('cypress-ci@0.1.0', '[cypress-ci]');
+
+function isExecException(err: unknown): err is ExecException {
+  return (err as ExecException).code !== undefined;
+}
 
 function serve(serveScript: string) {
   logger.log('starting server...');
-  const process = exec(serveScript);
+  const process = exec(serveScript, (error) => {});
 
   function shutdown() {
     try {
       process.kill('SIGINT');
       logger.log('shutdown server gracefully.');
-    } catch (err) {
-      if (err?.code === 'ESRCH') {
+    } catch (err: unknown) {
+      if (isExecException(err) && (err as ExecException).code === ESRCH) {
         logger.log('server is existed before shutdown it.');
+
+        return;
       }
 
       throw err;
@@ -80,6 +87,7 @@ async function serveAndTest({
   await waitOn({
     resources: [url],
   });
+
   try {
     return await test(configOptions);
   } finally {
