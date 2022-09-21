@@ -1,36 +1,15 @@
-const { join } = require('path');
-const { existsSync } = require('fs');
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.normalizeCommand = void 0;
+const path_1 = require("path");
+const fs_1 = require("fs");
 function isPackageScriptName(command) {
-  const packageFilename = join(process.cwd(), 'package.json');
-  const packageJson = require(packageFilename);
-
-  return existsSync(packageFilename) && Boolean(packageJson.scripts?.[command]);
+    var _a;
+    const packageFilename = (0, path_1.join)(process.cwd(), 'package.json');
+    const packageJson = require(packageFilename);
+    return (0, fs_1.existsSync)(packageFilename) && Boolean((_a = packageJson.scripts) === null || _a === void 0 ? void 0 : _a[command]);
 }
-
 function normalizeCommand(command) {
-  return isPackageScriptName(command) ? `npm run ${command}` : command;
+    return isPackageScriptName(command) ? `npm run ${command}` : command;
 }
-
-function Logger(groupName, prefix) {
-  this.prefix = prefix;
-  this.groupName = groupName;
-}
-
-Logger.prototype.group = function () {
-  console.group(this.groupName);
-};
-
-Logger.prototype.groupEnd = function () {
-  console.groupEnd(this.groupName);
-};
-
-Logger.prototype.log = function (...params) {
-  console.log(this.prefix, ...params);
-};
-
-Logger.prototype.error = function (...params) {
-  console.error(this.prefix, ...params);
-};
-
-module.exports = { normalizeCommand, Logger };
+exports.normalizeCommand = normalizeCommand;
