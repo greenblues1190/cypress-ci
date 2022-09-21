@@ -66,9 +66,11 @@ async function test(
 async function serveAndTest({
   serveScript,
   url,
+  timeout,
 }: {
   serveScript: string;
   url: string;
+  timeout: number;
 }) {
   const configOptions: Partial<CypressCommandLine.CypressRunOptions> = {
     browser: 'electron',
@@ -83,26 +85,42 @@ async function serveAndTest({
 
   const service = serve(serveScript);
 
-  await waitOn({
-    resources: [url],
-  });
-
   try {
+    await waitOn({
+      resources: [url],
+      timeout,
+      headers: {
+        Accept: 'text/html, application/json, text/plain, */*',
+      },
+      validateStatus: (status) =>
+        (status >= 200 && status < 300) || status === 304,
+    });
+
     await test(configOptions);
   } finally {
     service.shutdown();
   }
 }
 
-function run({ serveScript, url }: { serveScript: string; url: string }) {
+function run({
+  serveScript,
+  url,
+  timeout,
+}: {
+  serveScript: string;
+  url: string;
+  timeout: number;
+}) {
   console.log('cypress-ci is running.');
 
-  serveAndTest({ serveScript: normalizeCommand(serveScript), url }).catch(
-    (err: Error) => {
-      console.error(err);
-      process.exit(1);
-    },
-  );
+  serveAndTest({
+    serveScript: normalizeCommand(serveScript),
+    url,
+    timeout,
+  }).catch((err: Error) => {
+    console.error(err);
+    process.exit(1);
+  });
 }
 
 export { run };
