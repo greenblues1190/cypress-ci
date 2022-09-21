@@ -89,7 +89,7 @@ async function serveAndTest({
   });
 
   try {
-    return await test(configOptions);
+    await test(configOptions);
   } finally {
     service.shutdown();
   }
