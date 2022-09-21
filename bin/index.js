@@ -15,8 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = void 0;
 const child_process_1 = require("child_process");
 const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 const cypress_1 = __importDefault(require("cypress"));
 const wait_on_1 = __importDefault(require("wait-on"));
+const deepmerge_1 = __importDefault(require("deepmerge"));
 const utils_1 = require("./utils");
 const ESRCH = 3;
 function isExecException(err) {
@@ -50,8 +52,30 @@ function serve(serveScript) {
         shutdown,
     };
 }
-function test(configOptions) {
+function overrideConfig(url, filename) {
+    const configOptions = {
+        browser: 'electron',
+        config: {
+            e2e: {
+                baseUrl: url,
+            },
+            video: false,
+            screenshotOnRunFailure: false,
+        },
+    };
+    if (!filename) {
+        return configOptions;
+    }
+    if (!(0, utils_1.isJSONFile)(filename)) {
+        throw new Error(`'${filename}' is not valid json file.`);
+    }
+    const configFilePath = path_1.default.join(process.cwd(), filename);
+    const configJson = require(configFilePath);
+    return (0, deepmerge_1.default)(configJson, configOptions);
+}
+function test(url, configFilePath) {
     return __awaiter(this, void 0, void 0, function* () {
+        const configOptions = overrideConfig(url, configFilePath);
         const testResults = yield cypress_1.default.run(configOptions);
         if (testResults.status === 'failed') {
             throw new Error(testResults.message);
@@ -65,33 +89,33 @@ function test(configOptions) {
         console.log('Test succeeded! Your build is good to go.');
     });
 }
-function serveAndTest({ serveScript, url, }) {
+function serveAndTest({ serveScript, url, timeout, configFilePath, }) {
     return __awaiter(this, void 0, void 0, function* () {
-        const configOptions = {
-            browser: 'electron',
-            config: {
-                e2e: {
-                    baseUrl: url,
-                },
-                video: false,
-                screenshotOnRunFailure: false,
-            },
-        };
         const service = serve(serveScript);
-        yield (0, wait_on_1.default)({
-            resources: [url],
-        });
         try {
-            yield test(configOptions);
+            yield (0, wait_on_1.default)({
+                resources: [url],
+                timeout,
+                headers: {
+                    Accept: 'text/html, application/json, text/plain, */*',
+                },
+                validateStatus: (status) => (status >= 200 && status < 300) || status === 304,
+            });
+            yield test(url, configFilePath);
         }
         finally {
             service.shutdown();
         }
     });
 }
-function run({ serveScript, url }) {
+function run({ serveScript, url, timeout, configFilePath, }) {
     console.log('cypress-ci is running.');
-    serveAndTest({ serveScript: (0, utils_1.normalizeCommand)(serveScript), url }).catch((err) => {
+    serveAndTest({
+        serveScript: (0, utils_1.normalizeCommand)(serveScript),
+        url,
+        timeout,
+        configFilePath,
+    }).catch((err) => {
         console.error(err);
         process.exit(1);
     });

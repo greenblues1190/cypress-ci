@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.normalizeCommand = void 0;
+exports.isJSONFile = exports.normalizeCommand = void 0;
 const path_1 = require("path");
 const fs_1 = require("fs");
 function isPackageScriptName(command) {
@@ -13,3 +13,8 @@ function normalizeCommand(command) {
     return isPackageScriptName(command) ? `npm run ${command}` : command;
 }
 exports.normalizeCommand = normalizeCommand;
+function isJSONFile(filename) {
+    const regexJsonFile = new RegExp('.json$', 'i');
+    return regexJsonFile.test(filename);
+}
+exports.isJSONFile = isJSONFile;

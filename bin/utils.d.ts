@@ -1,2 +1,3 @@
 declare function normalizeCommand(command: string): string;
-export { normalizeCommand };
+declare function isJSONFile(filename: string): boolean;
+export { normalizeCommand, isJSONFile };
