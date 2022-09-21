@@ -80,7 +80,7 @@ Jenkins freestyle
 #!/bin/bash
 cd /var/lib/jenkins/workspace/your-project-directory
 npm ci
-npm run test:ci
+npm run cypress:ci
 npm run build
 ```
 
