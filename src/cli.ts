@@ -10,9 +10,19 @@ program
     'maximum time in ms to wait for a server response',
     '60000',
   )
+  .option(
+    '-c, --config <path>',
+    'path to cypress config json file',
+    'cypress.ci.json',
+  )
   .version('0.1.0')
   .parse();
 
-const { serve, url, timeout } = program.opts();
+const { serve, url, timeout, config } = program.opts();
 
-run({ serveScript: serve, url, timeout: Number(timeout) });
+run({
+  serveScript: serve,
+  url,
+  timeout: Number(timeout),
+  configFilePath: config,
+});

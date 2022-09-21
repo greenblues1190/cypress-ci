@@ -29,6 +29,7 @@
   "dependencies": {
     "commander": "^9.4.0",
     "cypress": "^10.8.0",
+    "deepmerge": "^4.2.2",
     "wait-on": "^6.0.1"
   },
   "devDependencies": {
