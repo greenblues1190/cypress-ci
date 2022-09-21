@@ -2,26 +2,25 @@ import { exec, ExecException } from 'child_process';
 import fs from 'fs';
 import cypress from 'cypress';
 import waitOn from 'wait-on';
-import { normalizeCommand, Logger } from './utils';
+import { normalizeCommand } from './utils';
 
 const ESRCH = 3;
-const logger = new Logger('cypress-ci@0.1.0', '[cypress-ci]');
 
 function isExecException(err: unknown): err is ExecException {
   return (err as ExecException).code !== undefined;
 }
 
 function serve(serveScript: string) {
-  logger.log('starting server...');
+  console.log('starting server...');
   const process = exec(serveScript, (error) => {});
 
   function shutdown() {
     try {
       process.kill('SIGINT');
-      logger.log('shutdown server gracefully.');
+      console.log('shutdown server gracefully.');
     } catch (err: unknown) {
       if (isExecException(err) && (err as ExecException).code === ESRCH) {
-        logger.log('server is existed before shutdown it.');
+        console.log('server is existed before shutdown it.');
 
         return;
       }
@@ -61,7 +60,7 @@ async function test(
 
     throw new Error(`Test failed. Stats file is exported to '${filename}'`);
   }
-  logger.log('Test succeeded! Your build is good to go.');
+  console.log('Test succeeded! Your build is good to go.');
 }
 
 async function serveAndTest({
@@ -96,17 +95,14 @@ async function serveAndTest({
 }
 
 function run({ serveScript, url }: { serveScript: string; url: string }) {
-  logger.group();
+  console.log('cypress-ci is running.');
 
-  serveAndTest({ serveScript: normalizeCommand(serveScript), url })
-    .then(() => {
-      logger.groupEnd();
-    })
-    .catch((err: Error) => {
-      logger.error(err);
-      logger.groupEnd();
+  serveAndTest({ serveScript: normalizeCommand(serveScript), url }).catch(
+    (err: Error) => {
+      console.error(err);
       process.exit(1);
-    });
+    },
+  );
 }
 
 export { run };

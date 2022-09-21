@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 import { program } from 'commander';
-import { run } from './e2e';
+import { run } from './index';
 
 program
   .option('-s, --serve <serve>', 'script to run server', 'start')

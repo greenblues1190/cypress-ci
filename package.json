@@ -2,7 +2,7 @@
   "name": "cypress-ci",
   "version": "0.1.1",
   "description": "Integrate Cypress into your CI provider",
-  "main": "./bin/e2e.js",
+  "main": "./bin/index.js",
   "repository": "git@github.com:greenblues1190/cypress-ci.git",
   "homepage": "https://github.com/greenblues1190/cypress-ci",
   "bugs": {
