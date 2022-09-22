@@ -10,6 +10,26 @@ Integrate [Cypress](https://www.cypress.io/) into your CI provider
 - [x] **extendable** (import local Cypress configuration file)
 - [x] **reports** (export test result as a file while logging console outputs)
 
+## Usages
+
+Add the script below in build script in your CI provider before a build.
+
+```sh
+cypress-ci -s <serve> -u <url>
+```
+
+### Examples
+
+Jenkins freestyle with npm scripts
+
+```bash
+#!/bin/bash
+cd /var/lib/jenkins/workspace/your-project-directory
+npm ci
+npm run cypress:ci
+npm run build
+```
+
 ## Installation
 
 ### npm
@@ -67,31 +87,8 @@ yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-deve
 | `-s`, `--serve`   | script to run server                             | `start`                 |
 | `-u`, `--url`     | url to test                                      | `http://localhost:3000` |
 | `-t`, `--timeout` | maximum time in ms to wait for a server response | 60000                   |
-| `-c`, `--config`  | path to cypress config json file                 |
 | `-V`, `--version` | output the version number                        |
 | `-h`, `--help`    | display help for command                         |
-
-### In CI build script
-
-1. Make sure that you install Node.js and all the [dependencies](#prerequisites).
-
-2. Add the script below in build script in your CI provider before a build.
-
-```sh
-npm run cypress:ci
-```
-
-#### Examples
-
-Jenkins freestyle
-
-```bash
-#!/bin/bash
-cd /var/lib/jenkins/workspace/your-project-directory
-npm ci
-npm run cypress:ci
-npm run build
-```
 
 ## Roadmap
 
