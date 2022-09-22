@@ -46,7 +46,7 @@ yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-deve
 
 ```json
 "scripts": {
-  "start": "webpack serve",
+  "start": "webpack serve --config webpack.config.js",
   "cypress:ci": "cypress-ci -s start -u http://localhost:3000 -c cypress.ci.json"
 }
 ```
@@ -58,7 +58,7 @@ yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-deve
 | `-s`, `--serve`   | script to run server                             | `start`                 |
 | `-u`, `--url`     | url to test                                      | `http://localhost:3000` |
 | `-t`, `--timeout` | maximum time in ms to wait for a server response | 60000                   |
-| `-c`, `--config`  | path to cypress config json file                 | `cypress.ci.json`       |
+| `-c`, `--config`  | path to cypress config json file                 |
 | `-V`, `--version` | output the version number                        |
 | `-h`, `--help`    | display help for command                         |
 
