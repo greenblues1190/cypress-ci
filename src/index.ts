@@ -3,8 +3,9 @@ import fs from 'fs';
 import path from 'path';
 import cypress from 'cypress';
 import waitOn from 'wait-on';
+import * as tsImport from 'ts-import';
 import deepmerge from 'deepmerge';
-import { isJSONFile, normalizeCommand } from './utils';
+import { normalizeCommand } from './utils';
 
 const ESRCH = 3;
 
@@ -45,35 +46,44 @@ function serve(serveScript: string) {
   };
 }
 
-function overrideConfig(url: string, filename?: string) {
-  const configOptions: Partial<CypressCommandLine.CypressRunOptions> = {
+function loadConfig() {
+  const filenames = ['cypress.config.js', 'cypress.config.ts'];
+  const configFilePath = filenames.find((filename) => {
+    return fs.existsSync(path.join(process.cwd(), filename));
+  });
+
+  if (!configFilePath) {
+    throw new Error(
+      `Could not find a Cypress configuration file in this folder: ${process.cwd()}`,
+    );
+  }
+
+  return tsImport.loadSync(
+    configFilePath,
+    {},
+  ) as Partial<CypressCommandLine.CypressRunOptions>;
+}
+
+function extendConfig(url: string) {
+  const overridingOptions: Partial<CypressCommandLine.CypressRunOptions> = {
     browser: 'electron',
     config: {
       e2e: {
         baseUrl: url,
       },
-      video: false,
-      screenshotOnRunFailure: false,
     },
   };
 
-  if (!filename) {
-    return configOptions;
-  }
+  const configOptions = loadConfig();
 
-  if (!isJSONFile(filename)) {
-    throw new Error(`'${filename}' is not valid json file.`);
-  }
-
-  const configFilePath = path.join(process.cwd(), filename);
-  const configJson =
-    require(configFilePath) as Partial<CypressCommandLine.CypressRunOptions>;
-
-  return deepmerge(configJson, configOptions);
+  return deepmerge<Partial<CypressCommandLine.CypressRunOptions>>(
+    configOptions,
+    overridingOptions,
+  );
 }
 
-async function test(url: string, configFilePath?: string) {
-  const configOptions = overrideConfig(url, configFilePath);
+async function test(url: string) {
+  const configOptions = extendConfig(url);
   const testResults = await cypress.run(configOptions);
 
   if (testResults.status === 'failed') {
@@ -95,12 +105,10 @@ async function serveAndTest({
   serveScript,
   url,
   timeout,
-  configFilePath,
 }: {
   serveScript: string;
   url: string;
   timeout: number;
-  configFilePath?: string;
 }) {
   const service = serve(serveScript);
 
@@ -115,7 +123,7 @@ async function serveAndTest({
         (status >= 200 && status < 300) || status === 304,
     });
 
-    await test(url, configFilePath);
+    await test(url);
   } finally {
     service.shutdown();
   }
@@ -125,12 +133,10 @@ function run({
   serveScript,
   url,
   timeout,
-  configFilePath,
 }: {
   serveScript: string;
   url: string;
   timeout: number;
-  configFilePath?: string;
 }) {
   console.log('cypress-ci is running.');
 
@@ -138,7 +144,6 @@ function run({
     serveScript: normalizeCommand(serveScript),
     url,
     timeout,
-    configFilePath,
   }).catch((err: Error) => {
     console.error(err);
     process.exit(1);

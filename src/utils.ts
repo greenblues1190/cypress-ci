@@ -12,10 +12,4 @@ function normalizeCommand(command: string) {
   return isPackageScriptName(command) ? `npm run ${command}` : command;
 }
 
-function isJSONFile(filename: string) {
-  const regexJsonFile = new RegExp('.json$', 'i');
-
-  return regexJsonFile.test(filename);
-}
-
-export { normalizeCommand, isJSONFile };
+export { normalizeCommand };

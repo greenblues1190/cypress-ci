@@ -30,6 +30,7 @@
     "commander": "^9.4.0",
     "cypress": "^10.8.0",
     "deepmerge": "^4.2.2",
+    "ts-import": "^4.0.0-beta.6",
     "wait-on": "^6.0.1"
   },
   "devDependencies": {
