@@ -10,7 +10,7 @@ program
     'maximum time in ms to wait for a server response',
     '60000',
   )
-  .version('0.2.4')
+  .version('0.2.6')
   .parse();
 
 const { serve, url, timeout } = program.opts();
@@ -19,6 +19,4 @@ run({
   serveScript: serve,
   url,
   timeout: Number(timeout),
-}).then(() => {
-  process.exit(0);
 });

@@ -140,14 +140,18 @@ function run({
 }) {
   console.log('cypress-ci is running.');
 
-  return serveAndTest({
+  serveAndTest({
     serveScript: normalizeCommand(serveScript),
     url,
     timeout,
-  }).catch((err: Error) => {
-    console.error(err);
-    process.exit(1);
-  });
+  })
+    .then(() => {
+      process.exit(0);
+    })
+    .catch((err: Error) => {
+      console.error(err);
+      process.exit(1);
+    });
 }
 
 export { run };
