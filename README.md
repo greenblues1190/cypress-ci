@@ -28,15 +28,24 @@ yarn add --dev cypress-ci
 
 ### Prerequisites
 
-> Disclaimer: You need [dependencies](https://docs.cypress.io/guides/continuous-integration/introduction.html#Dependencies) below before running cypress in CI providers.
+You need [dependencies](https://docs.cypress.io/guides/continuous-integration/introduction.html#Dependencies) below before running Cypress in CI providers.
 
-#### Ubuntu/Debian
+#### Use official Cypress docker images
+
+Read official Cypress documents
+
+- https://docs.cypress.io/examples/examples/docker#Images
+- https://www.cypress.io/blog/2019/05/02/run-cypress-with-a-single-docker-command/
+
+#### Install manually on Linux
+
+Ubuntu/Debian
 
 ```sh
 apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
 ```
 
-#### CentOS
+CentOS
 
 ```sh
 yum install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-deve
@@ -88,6 +97,7 @@ npm run build
 
 - [x] Import and override Cypress config file
 - [x] Support typescript
+- [ ] Run on a docker image
 - [ ] Provide webpack plugin
 
 ## License
