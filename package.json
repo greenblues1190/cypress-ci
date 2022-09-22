@@ -1,6 +1,6 @@
 {
   "name": "cypress-ci",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Integrate Cypress into your CI provider",
   "main": "./bin/index.js",
   "types": "./bin/index.d.ts",
