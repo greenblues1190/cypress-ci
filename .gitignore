@@ -1,3 +1,6 @@
+# production
+bin/
+
 # Logs
 *.log
 yarn-debug.log*
